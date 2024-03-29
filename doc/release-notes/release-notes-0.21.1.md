@@ -53,7 +53,7 @@ for schnorr signatures (BIP340) and tapscript (BIP342).
 If activated, these improvements will allow users of single-signature
 scripts, multisignature scripts, and complex contracts to all use
 identical-appearing commitments that enhance their privacy and the
-fungibility of all bitcoins. Spenders will enjoy lower fees and the
+fungibility of all Stohn Coins. Spenders will enjoy lower fees and the
 ability to resolve many multisig scripts and complex contracts with the
 same efficiency, low fees, and large anonymity set as single-sig users.
 Taproot and schnorr also include efficiency improvements for full nodes
@@ -104,7 +104,7 @@ details.
 For more information about taproot, please see the following resources:
 
 - Technical specifications
-  - [BIP340 Schnorr signatures for secp256k1](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki) 
+  - [BIP340 Schnorr signatures for secp256k1](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki)
   - [BIP341 Taproot: SegWit version 1 spending rules](https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki)
   - [BIP342 Validation of Taproot scripts](https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki)
 

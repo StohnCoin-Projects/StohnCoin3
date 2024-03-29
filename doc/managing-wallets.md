@@ -31,7 +31,7 @@ Wallet encryption may prevent unauthorized access. However, this significantly i
 
 Wallet encryption may also not protect against more sophisticated attacks. An attacker can, for example, obtain the password by installing a keylogger on the user's machine.
 
-After encrypting the wallet or changing the passphrase, a new backup needs to be created immediately. The reason is that the keypool is flushed and a new HD seed is generated after encryption. Any bitcoins received by the new seed cannot be recovered from the previous backups.
+After encrypting the wallet or changing the passphrase, a new backup needs to be created immediately. The reason is that the keypool is flushed and a new HD seed is generated after encryption. Any Stohn Coins received by the new seed cannot be recovered from the previous backups.
 
 The wallet's private key may be encrypted with the following command:
 
@@ -59,7 +59,7 @@ Note that if the passphrase is lost, all the coins in the wallet will also be lo
 
 ### 1.3 Unlocking the Wallet
 
-If the wallet is encrypted and the user tries any operation related to private keys, such as sending bitcoins, an error message will be displayed.
+If the wallet is encrypted and the user tries any operation related to private keys, such as sending Stohn Coins, an error message will be displayed.
 
 ```
 $ bitcoin-cli -rpcwallet="wallet-01" sendtoaddress "tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx" 0.01
@@ -76,7 +76,7 @@ This command takes the passphrase and an argument called `timeout`, which specif
 $ bitcoin-cli -rpcwallet="wallet-01" walletpassphrase "passphrase" 120
 ```
 
-In the GUI, there is no specific menu item to unlock the wallet. When the user sends bitcoins, the passphrase will be prompted automatically.
+In the GUI, there is no specific menu item to unlock the wallet. When the user sends Stohn Coins, the passphrase will be prompted automatically.
 
 ### 1.4 Backing Up the Wallet
 
@@ -94,7 +94,7 @@ This backup file can be stored on one or multiple offline devices, which must be
 
 If the computer has malware, it can compromise the wallet when recovering the backup file. One way to minimize this is to not connect the backup to an online device.
 
-If both the wallet and all backups are lost for any reason, the bitcoins related to this wallet will become permanently inaccessible.
+If both the wallet and all backups are lost for any reason, the Stohn Coins related to this wallet will become permanently inaccessible.
 
 ### 1.5 Backup Frequency
 
