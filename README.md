@@ -10,6 +10,10 @@ Stohn Coin Core connects to the Stohn Coin peer-to-peer network to download and 
 validate blocks and transactions. It also includes a wallet and graphical user
 interface, which can be optionally built.
 
+Block Confirmation Recommendation
+--------------------------------
+Developers should use at least 25 block confirmations to ensure the security and stability of transactions within the Stohn Coin network.
+
 License
 -------
 
