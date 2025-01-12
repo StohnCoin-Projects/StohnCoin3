@@ -12,7 +12,7 @@ interface, which can be optionally built.
 
 Block Confirmation Recommendation
 --------------------------------
-Developers should use at least 25 block confirmations to ensure the security and stability of transactions within the Stohn Coin network.
+Developers should use at least 15 block confirmations to ensure the security and stability of transactions within the Stohn Coin network.
 
 License
 -------

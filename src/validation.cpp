@@ -3093,6 +3093,11 @@ bool Chainstate::ActivateBestChainStep(BlockValidationState& state, CBlockIndex*
     const CBlockIndex* pindexOldTip = m_chain.Tip();
     const CBlockIndex* pindexFork = m_chain.FindFork(pindexMostWork);
 
+    // Add reorg check
+    if (!CheckReorgDepth(pindexFork, pindexMostWork, state)) {
+        return false;
+    }
+
     // Disconnect active blocks which are no longer in the best chain.
     bool fBlocksDisconnected = false;
     DisconnectedBlockTransactions disconnectpool{MAX_DISCONNECTED_TX_POOL_SIZE * 1000};
@@ -3167,6 +3172,87 @@ bool Chainstate::ActivateBestChainStep(BlockValidationState& state, CBlockIndex*
 
     CheckForkWarningConditions();
 
+    return true;
+}
+
+bool Chainstate::CheckReorgDepth(
+    const CBlockIndex* pindexFork,
+    const CBlockIndex* pindexNew,
+    BlockValidationState& state) const
+{
+    AssertLockHeld(cs_main);
+
+    // Log current block height and activation height
+    LogPrintf("CheckReorgDepth: Current height: %d, Activation height: %d\n", 
+        pindexNew->nHeight, 
+        m_chainman.GetConsensus().nMaxReorgDepthActivationBlock2);
+
+    // Skip check if we haven't reached activation height
+    if (pindexNew->nHeight < m_chainman.GetConsensus().nMaxReorgDepthActivationBlock2) {
+        LogPrintf("CheckReorgDepth: Check skipped - below activation height\n");
+        return true;
+    }
+
+    // Skip check during Initial Block Download
+    if (m_chainman.IsInitialBlockDownload()) {
+        LogPrintf("CheckReorgDepth: Check skipped - in Initial Block Download\n");
+        return true;
+    }
+
+    // Figure out how many blocks we'd actually ROLL BACK from our current active tip.
+    // If pindexFork is equal to our tip, there's no rollback needed.
+    const CBlockIndex* pindexActiveTip = m_chain.Tip();
+    if (!pindexActiveTip) {
+        // If we don't even have a tip, skip or treat as IBD
+        LogPrintf("CheckReorgDepth: No active tip, skipping\n");
+        return true;
+    }
+
+    int rollbackDepth = 0;
+
+    // If the fork point is behind our current tip, that implies a rollback.
+    if (pindexFork->nHeight < pindexActiveTip->nHeight) {
+        rollbackDepth = pindexActiveTip->nHeight - pindexFork->nHeight;
+    } else if (pindexFork->nHeight == pindexActiveTip->nHeight) {
+        // If fork is at exactly the same height as our tip, that means:
+        //  - Possibly the same block, or
+        //  - Different block at the same height. 
+        // If it's indeed the same block, then no rollback is needed (0).
+        // If it's a different block, rollbackDepth is STILL (pindexActiveTip->nHeight - pindexFork->nHeight) = 0.
+        // Either way, we can treat it as no rollback scenario.
+        rollbackDepth = 0;
+    } else {
+        // If pindexFork->nHeight > pindexActiveTip->nHeight => 
+        // we actually have a chain that is building forward from beyond our tip's height,
+        // which typically shouldn't happen. 
+        // But if it does, reorgDepth is 0 because we won't be undoing any blocks from our chain.
+        rollbackDepth = 0; 
+        LogPrintf("CheckReorgDepth: pindexFork is ahead of our tip, treating as forward extension\n");
+    }
+
+    LogPrintf("CheckReorgDepth: Active tip height: %d, Fork point height: %d, Proposed new block height: %d\n",
+        pindexActiveTip->nHeight,
+        pindexFork->nHeight,
+        pindexNew->nHeight);
+
+    LogPrintf("CheckReorgDepth: Calculated rollbackDepth (actual reorg) = %d, Max allowed: %d\n",
+              rollbackDepth, 
+              m_chainman.GetConsensus().nMaxReorganizationDepth);
+
+    // 2) If rollbackDepth > max, we reject.
+    if (rollbackDepth > m_chainman.GetConsensus().nMaxReorganizationDepth) {
+        LogPrintf("CheckReorgDepth: Reorg rejected - rollback depth = %d exceeds max depth\n",
+                  rollbackDepth);
+        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                             "too-deep-reorg",
+                             strprintf("Chain reorganization depth %d exceeds limit of %d",
+                                       rollbackDepth, 
+                                       m_chainman.GetConsensus().nMaxReorganizationDepth));
+    }
+
+    // 3) Todo: Check minimum peers
+
+    LogPrintf("CheckReorgDepth: Check passed\n");
     return true;
 }
 

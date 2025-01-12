@@ -81,6 +81,7 @@ struct Params {
     int nMaxReorgDepthActivationBlock;
     int nMaxReorganizationDepth;
     int nMinReorganizationPeers;
+    int nMaxReorgDepthActivationBlock2;
     /**
      * Hashes of blocks that
      * - are known to be consensus valid, and

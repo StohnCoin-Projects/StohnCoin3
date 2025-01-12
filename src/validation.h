@@ -769,6 +769,12 @@ private:
      */
     [[nodiscard]] util::Result<void> InvalidateCoinsDBOnDisk() EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
 
+    /** Check if a chain reorganization exceeds the allowed depth. */
+    bool CheckReorgDepth(
+        const CBlockIndex* pindexFork,
+        const CBlockIndex* pindexNew,
+        BlockValidationState& state) const EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+
     friend ChainstateManager;
 };
 
